@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TopPIC Suite & TopRepo Web Console</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            margin: 15px;
+            color: #000;
+            font-size: 12px;
+        }
+
+        .main-container {
+            width: 820px;
+            margin: 0 auto;
+            background: #f0f0f0;
+        }
+
+        .section-header {
+            font-size: 14px;
+            font-weight: bold;
+            padding: 6px 10px;
+            background: #e1e1e1;
+            border: 1px solid #707070;
+            border-bottom: none;
+            margin-top: 15px;
+        }
+
+        .section-box {
+            border: 1px solid #a0a0a0;
+            padding: 15px;
+            background: #f0f0f0;
+            margin-bottom: 15px;
+        }
+
+        /* Tabs for TopPIC */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #a0a0a0;
+            margin-bottom: -1px;
+        }
+
+        .tab {
+            padding: 4px 12px;
+            background: #e1e1e1;
+            border: 1px solid #a0a0a0;
+            margin-right: 2px;
+            cursor: pointer;
+            border-bottom: none;
+        }
+
+        .tab.active {
+            background: #f0f0f0;
+            border-bottom: 1px solid #f0f0f0;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+            border: 1px solid #a0a0a0;
+            padding: 15px;
+            background: #f0f0f0;
+            min-height: 240px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 20px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px 15px;
+        }
+
+        .field-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        label {
+            white-space: nowrap;
+        }
+
+        input[type="text"], input[type="number"], select {
+            width: 120px;
+            padding: 2px;
+            border: 1px solid #7a7a7a;
+            box-sizing: border-box;
+            background: #fff;
+        }
+
+        input[type="file"] {
+            font-size: 11px;
+        }
+
+        fieldset {
+            border: 1px solid #a0a0a0;
+            margin-top: 10px;
+            padding: 8px 12px;
+        }
+
+        legend {
+            padding: 0 4px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+        }
+
+        .actions-bar {
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        button.btn-std {
+            padding: 3px 12px;
+            border: 1px solid #707070;
+            background: #e1e1e1;
+            cursor: pointer;
+            min-width: 75px;
+        }
+
+        button.btn-std:hover {
+            background: #e5f1fb;
+            border-color: #0078d7;
+        }
+    </style>
+</head>
+<body>
+
+<form id="pipeline-form" action="/api/run-pipeline" method="POST" enctype="multipart/form-data">
+    <div class="main-container">
+        <!-- ==================== SPECTRUM FILES SECTION ==================== -->
+        <div class="section-header">Spectrum Files</div>
+        <div class="section-box">
+            <div class="field-row">
+                <label for="spectrum-file-input">Spectrum files (Multiple):</label>
+                <input type="file" id="spectrum-file-input" name="spectrum_files" multiple required>
+            </div>
+            <div style="margin-top: 8px;">
+                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                    <input type="checkbox" name="convert_mzml" value="true" checked>
+                    Convert to mzML (with Centroiding)
+                </label>
+            </div>
+        </div>
+
+        <!-- ==================== DATABASE FILES SECTION ==================== -->
+        <div class="section-header">Database Files</div>
+        <div class="section-box">
+            <div class="field-row">
+                <label for="database_file">Database File (.fasta):</label>
+                <input 
+                    type="file" 
+                    id="database_file" 
+                    name="database_file" 
+                    accept=".fasta,.fa" 
+                    required 
+                />            
+            </div>
+        </div>
+
+        <!-- ==================== TOPFD SECTION ==================== -->
+        <div class="section-header">TopFD v.1.5.3</div>
+        <div class="section-box">
+            <div class="grid-3">
+                <div>
+                    <div class="field-row"><label>Maximum charge:</label><input type="number" name="topfd_max_charge" value="30"></div>
+                    <div class="field-row"><label>Maximum mass (Da):</label><input type="number" name="topfd_max_mass" value="50000"></div>
+                    <div class="field-row"><label>M/z error tolerance:</label><input type="number" step="0.01" name="topfd_mz_error" value="0.02"></div>
+                    <div class="field-row"><label>Feature min scan number:</label><input type="number" name="topfd_min_scan" value="1"></div>
+                </div>
+                <div>
+                    <div class="field-row"><label>MS1 S/N ratio:</label><input type="number" step="0.1" name="topfd_ms1_sn" value="3.0"></div>
+                    <div class="field-row"><label>MS2 S/N ratio:</label><input type="number" step="0.1" name="topfd_ms2_sn" value="1.0"></div>
+                    <div class="field-row"><label>ECScore cutoff:</label><input type="number" step="0.01" name="topfd_ecscore" value="0.1"></div>
+                    <div class="field-row"><label>Feature split ratio:</label><input type="number" step="0.1" name="topfd_split_ratio" value="2.5"></div>
+                </div>
+                <div>
+                    <div class="field-row"><label>Precursor window (m/z):</label><input type="number" step="0.1" name="topfd_precursor_window" value="3.0"></div>
+                    <div class="field-row">
+                        <label>Fragmentation:</label>
+                        <select name="topfd_activation">
+                            <option value="FILE">FILE</option>
+                            <option value="CID">CID</option>
+                            <option value="ETD">ETD</option>
+                            <option value="HCD">HCD</option>
+                            <option value="MPD">MPD</option>
+                            <option value="UVPD">UVPD</option>
+                        </select>
+                    </div>
+                    <div class="field-row"><label>Thread number:</label><input type="number" name="topfd_threads" value="1"></div>
+                </div>
+            </div>
+
+            <fieldset>
+                <legend>Additional settings</legend>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="topfd_missing_ms1" value="true"> Missing MS1 spectra (-o)</label>
+                    <label><input type="checkbox" name="topfd_generate_html" value="true"> Skip HTML generation (-g)</label>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- ==================== TOPPIC SECTION ==================== -->
+        <div class="section-header">TopPIC v.1.5.3</div>
+        <div class="tabs">
+            <div class="tab active" data-tab="toppic-basic-tab">Basic Parameters</div>
+            <div class="tab" data-tab="toppic-adv-tab">Advanced Parameters</div>
+        </div>
+
+        <!-- Basic Parameters Tab -->
+        <div id="toppic-basic-tab" class="tab-content active">
+            <div class="field-row">
+                <div class="field-row">
+                    <label for="toppic-fixed-mod-select">Fixed modifications:</label>
+                    <select name="toppic_fixed_mod" id="toppic-fixed-mod-select">
+                        <option value="NONE">NONE</option>
+                        <option value="C57">C57 (carbamidomethylation on cysteine)</option>
+                        <option value="C58">C58 (carboxymethylation on cysteine)</option>
+                        <option value="FILE">A fixed modification file</option>
+                    </select>
+                </div>
+
+                <div class="field-row" id="fixed-mod-file-container" style="display: none; margin-top: 6px;">
+                    <label for="fixed-mod-file-input">Fixed modification file:</label>
+                    <input type="file" id="fixed-mod-file-input" name="toppic_fixed_mod_file">
+                </div>
+            </div>
+
+            <div class="field-row">
+                <label>Common PTM file (-i):</label>
+                <input type="file" name="toppic_ptm_file">
+            </div>
+
+            <div class="grid-2" style="margin-top: 10px;">
+                <div>
+                    <div class="field-row"><label>Max unexpected mods (-s):</label><input type="number" name="toppic_max_shifts" value="1"></div>
+                    <div class="field-row"><label><input type="checkbox" name="toppic_decoy" value="true"> Decoy database (-d)</label></div>
+                    <div class="field-row"><label>Mass error tolerance PPM (-e):</label><input type="number" name="toppic_mass_err" value="10"></div>
+                    <div class="field-row"><label>Thread number (-u):</label><input type="number" name="toppic_threads" value="1"></div>
+                </div>
+                <div>
+                    <div class="field-row"><label><input type="checkbox" name="toppic_missing_ms1_feat" value="true"> No TopFD feature file (-x)</label></div>
+                    <div class="field-row"><label>PrSM cluster error (Da) (-p):</label><input type="number" step="0.1" name="toppic_cluster_err" value="1.2"></div>
+                </div>
+            </div>
+
+            <fieldset>
+                <legend>Cutoff settings</legend>
+                <div class="grid-2">
+                    <div>
+                        <div class="field-row">
+                            <label>Spectrum level (-t):</label>
+                            <select name="toppic_spec_cutoff_type">
+                                <option value="EVALUE">EVALUE</option>
+                                <option value="FDR">FDR</option>
+                            </select>
+                        </div>
+                        <div class="field-row">
+                            <label>Cutoff value (-v):</label>
+                            <input type="number" step="0.001" name="toppic_spec_cutoff_val" value="0.01">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="field-row">
+                            <label>Proteoform level (-T):</label>
+                            <select name="toppic_prot_cutoff_type">
+                                <option value="EVALUE">EVALUE</option>
+                                <option value="FDR">FDR</option>
+                            </select>
+                        </div>
+                        <div class="field-row">
+                            <label>Cutoff value (-V):</label>
+                            <input type="number" step="0.001" name="toppic_prot_cutoff_val" value="0.01">
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- Advanced Parameters Tab -->
+        <div id="toppic-adv-tab" class="tab-content">
+            <div class="grid-2">
+                <div>
+                    <div class="field-row">
+                        <label>Fragmentation (-a):</label>
+                        <select name="toppic_adv_fragmentation">
+                            <option value="FILE">FILE</option>
+                            <option value="CID">CID</option>
+                            <option value="HCD">HCD</option>
+                            <option value="ETD">ETD</option>
+                            <option value="UVPD">UVPD</option>
+                        </select>
+                    </div>
+                    <div class="field-row"><label>Minimum mass shift Da (-m):</label><input type="number" name="toppic_min_shift" value="-500"></div>
+                </div>
+                <div>
+                    <div class="field-row"><label>Maximum mass shift Da (-M):</label><input type="number" name="toppic_max_shift" value="500"></div>
+                    <div class="field-row"><label>Num combined spectra (-r):</label><input type="number" name="toppic_combined_spectra_num" value="1"></div>
+                </div>
+            </div>
+
+            <div class="grid-2" style="margin-top: 5px;">
+                <div>
+                    <label><input type="checkbox" name="toppic_adv_html" value="true"> Skip HTML generation (-g)</label><br>
+                    <label><input type="checkbox" name="toppic_adv_keep_decoy" value="true"> Keep decoy IDs (-K)</label>
+                </div>
+                <div>
+                    <label><input type="checkbox" name="toppic_adv_keep_intermediate" value="true"> Keep intermediate files (-k)</label>
+                </div>
+            </div>
+
+            <fieldset>
+                <legend>Modification localization</legend>
+                <div class="field-row">
+                    <label>MIScore threshold (-H):</label>
+                    <input type="number" step="0.01" name="toppic_miscore" value="0.15">
+                </div>
+            </fieldset>
+        </div>
+
+        <!-- ==================== TOPREPO SECTION ==================== -->
+        <div class="section-header">TopRepo Settings</div>
+        <div class="section-box">
+            <div class="field-row">
+                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                    <input type="checkbox" id="run-toprepo-checkbox" name="run_toprepo" value="true" checked>
+                    Run TopRepo
+                </label>
+            </div>
+            <div class="field-row" id="toprepo-dataset-container" style="margin-top: 8px;">
+                <label for="toprepo_dataset_id">Dataset ID:</label>
+                <input type="text" id="toprepo_dataset_id" name="toprepo_dataset_id" value="PXD029703" required>
+            </div>
+        </div>
+
+        <!-- Global Actions -->
+        <div class="actions-bar">
+            <div>
+                <button type="button" id="reset-btn" class="btn-std">Default Parameters</button>
+            </div>
+            <div>
+                <button type="submit" class="btn-std" style="font-weight: bold; width: 100px;">Start Pipeline</button>
+            </div>
+        </div>
+
+    </div>
+</form>
+
+<script src="/static/js/pipeline.js"></script>
+
+</body>
+</html>

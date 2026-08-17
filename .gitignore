@@ -1,14 +1,11 @@
-# Python / Virtual Environment
 venv/
 __pycache__/
 *.pyc
 
-# Data & Upload Outputs
 outputs/*
 uploads/*
 !outputs/.gitkeep
 !uploads/.gitkeep
 
-# OS / Editor junk
 .DS_Store
 .vscode/

@@ -29,6 +29,7 @@ sudo apt install -y \
   lsof \
   git \
   docker.io
+
 # Clone the repository
 git clone https://github.com/whu025/toppic-suite-pipeline.git
 cd toppic-suite-pipeline
@@ -46,11 +47,11 @@ chmod +x run.sh
 
 Navigate to ```http://127.0.0.1:8000/```.
 
-1. Upload st_1.raw, st_2.raw, and uniprot.fasta. 
+1. Upload st_1.raw, st_2.raw, and uniprot-st.fasta. 
 2. Select Carbamidomethylation on cysteine as the fixed modification.
 3. Check the checkbox Decoy database.
 4. Select FDR as the spectrum level cutoff type.
 5. Select FDR as the proteoform level cutoff type.
 <img width="1261" height="1225" alt="Screenshot from 2026-08-18 10-40-24" src="https://github.com/user-attachments/assets/986ee8d9-f154-40e3-a135-022f52ff2e79" />
 
-Click ```Start Pipeline```. You should see updates of the pipeline in your terminal. 
+Click ```Start Pipeline```. Pipeline updates can be seen in the terminal. 
